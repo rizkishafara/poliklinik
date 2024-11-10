@@ -28,9 +28,6 @@ func LoadConfig(path string) (config Config) {
 	v := viper.New()
 
 	// Default Config
-	v.SetDefault("ENVIRONMENT", "development")
-	v.SetDefault("SERVER_HOST", "localhost")
-	v.SetDefault("SERVER_PORT", 1323)
 	// v.SetDefault("DB_DSN", "host=localhost user=root dbname=grelegant port=8080 sslmode=disable")
 
 	if _, err := os.Stat(path + "/dev.env"); os.IsNotExist(err) {

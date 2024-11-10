@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"poliklinik/config"
 	"poliklinik/middlewares"
 	"poliklinik/router"
 
@@ -16,13 +17,14 @@ import (
 )
 
 func init() {
-	os.Setenv("HOST", "localhost")
-	os.Setenv("PORT", "1323")
+	// os.Setenv("HOST", "localhost")
+	// os.Setenv("PORT", "1323")
 	os.Setenv("SECRET_KEY", "secret")
 	os.Setenv("GO_ENV", "development")
 }
 
 func main() {
+	config := config.LoadConfig(".")
 	e := echo.New()
 	pongo := pongo4echo.Renderer{}
 	if os.Getenv("GO_ENV") != "production" {
@@ -69,7 +71,10 @@ func main() {
 	router.Pasien(e2)
 	router.Periksa(e2)
 
-	host := fmt.Sprintf("%s:%s", os.Getenv("HOST"), os.Getenv("PORT"))
+
+
+	host := fmt.Sprintf("%s:%v", config.ServerHost, config.ServerPort)
+	fmt.Println("Server started on", host)
 	srv := http.Server{
 		Addr:    host,
 		Handler: e,
