@@ -23,28 +23,26 @@ func LoginPost(c echo.Context) error {
 
 	resp := models.Login(username, password)
 
-	if resp.Status != 200 {
-		return c.JSON(http.StatusBadRequest, resp)
-	}
+	if resp.Status == 200 {
+		dataMap, ok := resp.Data.(map[string]interface{})
+		if !ok {
+			return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Invalid response data"})
+		}
 
-	dataMap, ok := resp.Data.(map[string]interface{})
-	if !ok {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Invalid response data"})
-	}
+		sess, _ := session.Get("session", c)
+		sess.Options = &sessions.Options{
+			Path:     "/",
+			MaxAge:   86400,                 // 24 hours
+			HttpOnly: false,                 // Allow JavaScript access
+			SameSite: http.SameSiteNoneMode, // Enable cross-site access
+			Secure:   true,                  // Required for SameSite=None
+		}
 
-	sess, _ := session.Get("session", c)
-	sess.Options = &sessions.Options{
-		Path:     "/",
-		MaxAge:   86400,                 // 24 hours
-		HttpOnly: false,                 // Allow JavaScript access
-		SameSite: http.SameSiteNoneMode, // Enable cross-site access
-		Secure:   true,                  // Required for SameSite=None
+		sess.Values["Auth"] = true
+		sess.Values["id"] = dataMap["id"]
+		sess.Values["username"] = dataMap["username"]
+		sess.Save(c.Request(), c.Response())
 	}
-
-	sess.Values["Auth"] = true
-	sess.Values["id"] = dataMap["id"]
-	sess.Values["username"] = dataMap["username"]
-	sess.Save(c.Request(), c.Response())
 
 	resp = utils.Respon{
 		Status:  resp.Status,

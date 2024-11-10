@@ -25,6 +25,20 @@ func Login(username, password string) utils.Respon {
 		return Respon
 	}
 
+	passnew, err := utils.HashPassword(password)
+	if err != nil {
+		log.Println("error hash password", err)
+		Respon.Status = 500
+		Respon.Message = err.Error()
+		return Respon
+	}
+
+	if (passnew != datauser[0]["password"]) {
+		Respon.Status = 400
+		Respon.Message = "password invalid"
+		return Respon
+	}
+
 	datares := make(map[string]interface{})
 	if datauser != nil {
 		datares["username"] = datauser[0]["username"]
