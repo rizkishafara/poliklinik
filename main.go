@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"poliklinik/middlewares"
 	"poliklinik/router"
 
 	"github.com/gorilla/sessions"
@@ -60,10 +61,13 @@ func main() {
 	router.Auth(e)
 
 	//use middleware for auth
-	// e.Use(middlewares.AuthSessionMiddleware)
+	e2 := e
+	e2.Use(middlewares.AuthSessionMiddleware)
 
 	// need authorization router
-	// router.Admin(e)
+	router.Dokter(e2)
+	router.Pasien(e2)
+	router.Periksa(e2)
 
 	host := fmt.Sprintf("%s:%s", os.Getenv("HOST"), os.Getenv("PORT"))
 	srv := http.Server{
