@@ -30,6 +30,8 @@
       processing: true,
       serverSide: true,
       paging: false,
+      ordering: false,
+      searching: false,
       ajax: {
         url: "/pasien/get",
         type: "GET",
@@ -41,7 +43,12 @@
         },
       },
       columns: [
-        { data: "id" },
+        {
+          data: "id",
+          render: function (data, type, row, meta) {
+            return meta.row + 1;
+          },
+        },
         { data: "nama" },
         { data: "alamat" },
         { data: "no_hp" },

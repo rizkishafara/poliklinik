@@ -30,18 +30,22 @@
       processing: true,
       serverSide: true,
       paging: false,
+      ordering: false,
+      searching: false,
       ajax: {
         url: "/dokter/get",
         type: "GET",
         dataSrc: function (json) {
           console.log(json);
-
-          // Check if json.data is null, return empty array if true
           return json.data ? json.data : [];
         },
       },
       columns: [
-        { data: "id" },
+        { data: "id",
+          render: function (data, type, row, meta) {
+            return meta.row + 1;
+          }
+         },
         { data: "nama" },
         { data: "alamat" },
         { data: "no_hp" },
