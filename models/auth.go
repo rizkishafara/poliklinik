@@ -10,7 +10,7 @@ func Login(username, password string) utils.Respon {
 	dbEngine := db.ConnectDB()
 	var Respon utils.Respon
 
-	datauser, err := dbEngine.QueryString("SELECT id, username FROM users WHERE username = ? ", username)
+	datauser, err := dbEngine.QueryString("SELECT id, username, password FROM users WHERE username = ? ", username)
 
 	if err != nil {
 		log.Println("error get user", err)
@@ -18,6 +18,7 @@ func Login(username, password string) utils.Respon {
 		Respon.Message = err.Error()
 		return Respon
 	}
+	defer dbEngine.Close()
 
 	if datauser == nil {
 		Respon.Status = 404
@@ -25,17 +26,10 @@ func Login(username, password string) utils.Respon {
 		return Respon
 	}
 
-	passnew, err := utils.HashPassword(password)
-	if err != nil {
-		log.Println("error hash password", err)
-		Respon.Status = 500
-		Respon.Message = err.Error()
-		return Respon
-	}
-
-	if (passnew != datauser[0]["password"]) {
-		Respon.Status = 400
-		Respon.Message = "password invalid"
+	errc := utils.CheckPasswordHash(password, datauser[0]["password"])
+	if !errc {
+		Respon.Status = 404
+		Respon.Message = "password not match"
 		return Respon
 	}
 
