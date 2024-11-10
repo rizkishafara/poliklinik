@@ -22,9 +22,9 @@ func init() {
 	if err != nil {
 		log.Print("couldn't load configuration file. Use container environment variable")
 		log.Print(err)
+		return
 	} else {
 		log.Print("success load configuration file")
-		return
 	}
 	config := config.LoadConfig(".")
 	os.Setenv("SERVER_HOST", config.ServerHost)
