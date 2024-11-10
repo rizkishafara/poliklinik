@@ -16,6 +16,7 @@ func AuthSessionMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		if isPublicRoute(ctx.Request().RequestURI) {
 			return next(ctx)
 		}
+		fmt.Println("path: ", ctx.Request().RequestURI)
 		gob.Register(map[string]interface{}{})
 		sess, errS := session.Get("session", ctx)
 		if errS != nil {
@@ -37,6 +38,7 @@ func AuthSessionMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 func isPublicRoute(path string) bool {
 
 	for _, route := range router.PublicRoutes {
+		fmt.Println("route: ", route)
 		if route == path {
 			return true
 		}
