@@ -4,7 +4,6 @@ go 1.21
 
 require (
 	github.com/flosch/pongo2/v4 v4.0.2
-	github.com/golang-jwt/jwt/v4 v4.5.1
 	github.com/gorilla/sessions v1.2.2
 	github.com/labstack/echo/v4 v4.12.0
 )
@@ -42,6 +41,7 @@ require (
 require (
 	github.com/go-sql-driver/mysql v1.8.1
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
+	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo-contrib v0.17.1
 	github.com/labstack/gommon v0.4.2 // indirect
 	github.com/lib/pq v1.10.9

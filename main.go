@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"fmt"
 	"log"
 	"net/http"
@@ -10,6 +11,7 @@ import (
 	"poliklinik/router"
 
 	"github.com/gorilla/sessions"
+	"github.com/joho/godotenv"
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -17,6 +19,26 @@ import (
 )
 
 func init() {
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	err := godotenv.Load()
+	if err != nil {
+		log.Print("couldn't load configuration file. Use container environment variable")
+		log.Print(err)
+	} else {
+		log.Print("success load configuration file")
+		return
+	}
+	config := config.LoadConfig(".")
+	os.Setenv("SERVER_HOST", config.ServerHost)
+	os.Setenv("SERVER_PORT", fmt.Sprintf("%v", config.ServerPort))
+	os.Setenv("DB", config.Db)
+	os.Setenv("DB_DSN", config.DbDsn)
+	// os.Setenv("SMTP_SENDER", config.SmtpSender)
+	// os.Setenv("SMTP_HOST", config.SmtpHost)
+	// os.Setenv("SMTP_PORT", fmt.Sprintf("%v", config.SmtpPort))
+	// os.Setenv("SMTP_USER", config.SmtpUser)
+	// os.Setenv("SMTP_PASS", config.SmtpPass)
+	os.Setenv("STARTLS", fmt.Sprintf("%v", config.StarTLS))
 	// os.Setenv("HOST", "localhost")
 	// os.Setenv("PORT", "1323")
 	os.Setenv("SECRET_KEY", "secret")
@@ -24,7 +46,6 @@ func init() {
 }
 
 func main() {
-	config := config.LoadConfig(".")
 	e := echo.New()
 	pongo := pongo4echo.Renderer{}
 	if os.Getenv("GO_ENV") != "production" {
@@ -71,9 +92,7 @@ func main() {
 	router.Pasien(e2)
 	router.Periksa(e2)
 
-
-
-	host := fmt.Sprintf("%s:%v", config.ServerHost, config.ServerPort)
+	host := fmt.Sprintf("%s:%v", os.Getenv("SERVER_HOST"), os.Getenv("SERVER_PORT"))
 	fmt.Println("Server started on", host)
 	srv := http.Server{
 		Addr:    host,

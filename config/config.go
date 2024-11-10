@@ -1,8 +1,6 @@
 package config
 
 import (
-	"os"
-
 	"github.com/spf13/viper"
 )
 
@@ -27,14 +25,8 @@ type Config struct {
 func LoadConfig(path string) (config Config) {
 	v := viper.New()
 
-	// Default Config
-	// v.SetDefault("DB_DSN", "host=localhost user=root dbname=grelegant port=8080 sslmode=disable")
+	v.SetConfigFile(".env")
 
-	if _, err := os.Stat(path + "/dev.env"); os.IsNotExist(err) {
-		v.SetConfigFile(".env")
-	} else {
-		v.SetConfigFile("dev.env")
-	}
 	v.SetConfigType("env")
 	v.AddConfigPath(path)
 	v.AutomaticEnv()
@@ -42,6 +34,5 @@ func LoadConfig(path string) (config Config) {
 	_ = v.ReadInConfig()
 	_ = v.Unmarshal(&config)
 
-	// fmt.Println("Config loaded", v)
 	return
 }
