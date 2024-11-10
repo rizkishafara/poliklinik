@@ -74,10 +74,6 @@ func RegisterPost(c echo.Context) error {
 
 	resp := models.Register(username, password)
 
-	if resp.Status != 200 {
-		return c.JSON(resp.Status, resp)
-	}
-
 	resp = utils.Respon{
 		Status:  resp.Status,
 		Message: resp.Message,
