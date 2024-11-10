@@ -4,14 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% if title %}{{title}}{% endif %}</title>
-    {% include "/header.html" %} {% block css %}{% endblock %}
+    {% include "/header.html" %} {%block css%}{%endblock%}
   </head>
   <body>
     {% include "/navbar.html" %}
-    <div class="container mt-4">
-      {% block content %}{% endblock %}
-    </div>
-    {% include "/js.html" %}
-    {% block js %}{% endblock %}
+    <div class="container mt-4">{% block content %}{% endblock %}</div>
+    {% include "/js.html" %} {% block js %}{% endblock %}
   </body>
 </html>
