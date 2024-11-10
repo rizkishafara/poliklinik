@@ -39,6 +39,19 @@ func Register(username, password string) utils.Respon {
 	dbEngine := db.ConnectDB()
 	var Respon utils.Respon
 
+	datauser, err := dbEngine.QueryString("SELECT id FROM users WHERE username = ? ", username)
+	if err != nil {
+		log.Println("error get user", err)
+		Respon.Status = 500
+		Respon.Message = err.Error()
+		return Respon
+	}
+	if datauser != nil {
+		Respon.Status = 400
+		Respon.Message = "username already exist"
+		return Respon
+	}
+
 	passnew, err := utils.HashPassword(password)
 	if err != nil {
 		log.Println("error hash password", err)
