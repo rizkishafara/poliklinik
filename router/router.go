@@ -11,6 +11,7 @@ var PublicRoutes = []string{
 	"/login",
 	"/register",
 	"/logout",
+	"/favicon.ico",
 }
 
 func Home(e *echo.Echo) {
