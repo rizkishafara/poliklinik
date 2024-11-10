@@ -54,6 +54,7 @@ func Register(username, password string) utils.Respon {
 		Respon.Message = err.Error()
 		return Respon
 	}
+	defer dbEngine.Close()
 	if datauser != nil {
 		Respon.Status = 400
 		Respon.Message = "username already exist"
@@ -75,6 +76,7 @@ func Register(username, password string) utils.Respon {
 		Respon.Message = err.Error()
 		return Respon
 	}
+	defer dbEngine.Close()
 
 	Respon.Status = 200
 	Respon.Message = "success"

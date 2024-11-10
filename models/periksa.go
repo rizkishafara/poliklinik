@@ -26,6 +26,7 @@ func GetPeriksa() utils.Respon {
 		Respon.Message = err.Error()
 		return Respon
 	}
+	defer dbEngine.Close()
 
 	Respon.Status = 200
 	Respon.Message = "success"
@@ -43,6 +44,7 @@ func CreatePeriksa(id_dokter, id_pasien, obat, tanggal, catatan string) utils.Re
 		Respon.Message = err.Error()
 		return Respon
 	}
+	defer dbEngine.Close()
 
 	Respon.Status = 200
 	Respon.Message = "success"
@@ -59,6 +61,7 @@ func UpdatePeriksa(id, id_dokter, id_pasien, obat, tanggal, catatan string) util
 		Respon.Message = err.Error()
 		return Respon
 	}
+	defer dbEngine.Close()
 
 	Respon.Status = 200
 	Respon.Message = "success"
@@ -75,6 +78,7 @@ func DeletePeriksa(id string) utils.Respon {
 		Respon.Message = err.Error()
 		return Respon
 	}
+	defer dbEngine.Close()
 
 	Respon.Status = 200
 	Respon.Message = "success"

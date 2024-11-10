@@ -16,6 +16,7 @@ func GetPasien() utils.Respon {
 		Respon.Message = err.Error()
 		return Respon
 	}
+	defer dbEngine.Close()
 
 	Respon.Status = 200
 	Respon.Message = "success"
@@ -33,6 +34,7 @@ func CreatePasien(nama, alamat, no_hp string) utils.Respon {
 		Respon.Message = err.Error()
 		return Respon
 	}
+	defer dbEngine.Close()
 
 	Respon.Status = 200
 	Respon.Message = "success"
@@ -49,6 +51,7 @@ func UpdatePasien(id, nama, alamat, no_hp string) utils.Respon {
 		Respon.Message = err.Error()
 		return Respon
 	}
+	defer dbEngine.Close()
 
 	Respon.Status = 200
 	Respon.Message = "success"
@@ -65,6 +68,7 @@ func DeletePasien(id string) utils.Respon {
 		Respon.Message = err.Error()
 		return Respon
 	}
+	defer dbEngine.Close()
 
 	Respon.Status = 200
 	Respon.Message = "success"

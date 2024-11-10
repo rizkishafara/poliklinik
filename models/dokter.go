@@ -16,6 +16,7 @@ func GetDokter() utils.Respon {
 		Respon.Message = err.Error()
 		return Respon
 	}
+	defer dbEngine.Close()
 
 	Respon.Status = 200
 	Respon.Message = "success"
@@ -34,6 +35,8 @@ func CreateDokter(nama, alamat, no_hp string) utils.Respon {
 		return Respon
 	}
 
+	defer dbEngine.Close()
+
 	Respon.Status = 200
 	Respon.Message = "success"
 	return Respon
@@ -50,6 +53,8 @@ func UpdateDokter(id, nama, alamat, no_hp string) utils.Respon {
 		return Respon
 	}
 
+	defer dbEngine.Close()
+
 	Respon.Status = 200
 	Respon.Message = "success"
 	return Respon
@@ -65,6 +70,7 @@ func DeleteDokter(id string) utils.Respon {
 		Respon.Message = err.Error()
 		return Respon
 	}
+	defer dbEngine.Close()
 
 	Respon.Status = 200
 	Respon.Message = "success"
