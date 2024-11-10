@@ -92,5 +92,5 @@ func Logout(c echo.Context) error {
 	sess.Values["username"] = ""
 	sess.Options.MaxAge = -1
 	sess.Save(c.Request(), c.Response())
-	return c.Redirect(http.StatusFound, "/")
+	return c.Redirect(http.StatusFound, "/login")
 }
