@@ -1,7 +1,6 @@
 package main
 
 import (
-	"crypto/tls"
 	"fmt"
 	"log"
 	"net/http"
@@ -19,7 +18,6 @@ import (
 )
 
 func init() {
-	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 	err := godotenv.Load()
 	if err != nil {
 		log.Print("couldn't load configuration file. Use container environment variable")
