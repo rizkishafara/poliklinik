@@ -58,21 +58,13 @@
   formRegister.addEventListener("submit", async (e) => {
     e.preventDefault();
     const formData = new FormData(formRegister);
-    const data = {
-      username: formData.get("username"),
-      password: formData.get("password"),
-      confirmpassword: formData.get("confirmpassword"),
-    };
-    if (data.password !== data.confirmpassword) {
+    if (formData.get("password") !== formData.get("confirmpassword")) {
       alert("Password dan konfirmasi password tidak sama");
       return;
     }
     const response = await fetch("/register", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
+      body: formData,
     });
     const result = await response.json();
     if (result.status === 200) {
