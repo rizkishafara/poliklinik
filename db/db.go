@@ -3,7 +3,7 @@ package db
 import (
 	"fmt"
 	"log"
-	"poliklinik/config"
+	"os"
 
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/lib/pq"
@@ -11,9 +11,7 @@ import (
 )
 
 func ConnectDB() *xorm.Engine {
-	config := config.LoadConfig(".")
-
-	engine, err := xorm.NewEngine(config.Db, config.DbDsn)
+	engine, err := xorm.NewEngine(os.Getenv("DB"), os.Getenv("DB_DSN"))
 	if err != nil {
 		fmt.Println("connect postgres error", err)
 		log.Fatal(err)
