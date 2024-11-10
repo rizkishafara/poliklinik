@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
 	"poliklinik/models"
 	"poliklinik/utils"
@@ -29,19 +30,32 @@ func LoginPost(c echo.Context) error {
 			return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Invalid response data"})
 		}
 
-		sess, _ := session.Get("session", c)
+		sess, err := session.Get("session", c)
+
+		secureFlag := false
+		if c.Request().TLS != nil { // Check if HTTPS is used
+			secureFlag = true
+		}
 		sess.Options = &sessions.Options{
 			Path:     "/",
 			MaxAge:   86400,                 // 24 hours
-			HttpOnly: false,                 // Allow JavaScript access
+			HttpOnly: true,                  // More secure as it prevents JavaScript access
 			SameSite: http.SameSiteNoneMode, // Enable cross-site access
-			Secure:   true,                  // Required for SameSite=None
+			Secure:   secureFlag,            // Required for SameSite=None
+		}
+		if err != nil {
+			log.Println("error get session", err)
+			return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Session error"})
 		}
 
 		sess.Values["Auth"] = true
 		sess.Values["id"] = dataMap["id"]
 		sess.Values["username"] = dataMap["username"]
-		sess.Save(c.Request(), c.Response())
+		err = sess.Save(c.Request(), c.Response())
+		if err != nil {
+			log.Println("error save session", err)
+			return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Session error"})
+		}
 	}
 
 	resp = utils.Respon{
