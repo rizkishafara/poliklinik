@@ -3,7 +3,12 @@
 <h4>Data Periksa</h4>
 
 <div class="mb-3">
-  <button type="button" class="btn btn-primary" onclick="addPeriksa()">
+  <button
+    id="btnadd-periksa"
+    type="button"
+    class="btn btn-primary"
+    onclick="addPeriksa()"
+  >
     Tambah Periksa
   </button>
 </div>
@@ -30,6 +35,7 @@
   let optionDokter = "";
   let optionPasien = "";
   $(document).ready(function () {
+    getOptData();
     $("#table-periksa").DataTable({
       processing: true,
       serverSide: true,
@@ -72,28 +78,6 @@
         },
       ],
     });
-
-    //get dokter
-    fetch("/dokter/get", {
-      method: "GET",
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        result.data.forEach((dokter) => {
-          optionDokter += `<option value="${dokter.id}">${dokter.nama}</option>`;
-        });
-      });
-
-    //get pasien
-    fetch("/pasien/get", {
-      method: "GET",
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        result.data.forEach((pasien) => {
-          optionPasien += `<option value="${pasien.id}">${pasien.nama}</option>`;
-        });
-      });
   });
 
   function addPeriksa() {
@@ -110,14 +94,12 @@
                         <div class="mb-3">
                             <label for="pasien" class="form-label">Nama Pasien</label>
                             <select class="form-select" id="pasien" name="pasien" required>
-                                <option value="">Pilih Pasien</option>
                                 ${optionPasien}
                             </select>
                         </div>
                         <div class="mb-3">
                             <label for="dokter" class="form-label">Nama Dokter</label>
                             <select class="form-select" id="dokter" name="dokter" required>
-                                <option value="">Pilih Dokter</option>
                                 ${optionDokter}
                             </select>
                         </div>
@@ -186,14 +168,12 @@
                         <div class="mb-3">
                             <label for="pasien" class="form-label">Nama Pasien</label>
                             <select class="form-select" id="pasien" name="pasien" required>
-                                <option value="">Pilih Pasien</option>
                                 ${optionPasien}
                             </select>
                         </div>
                         <div class="mb-3">
                             <label for="dokter" class="form-label">Nama Dokter</label>
                             <select class="form-select" id="dokter" name="dokter" required>
-                                <option value="">Pilih Dokter</option>
                                 ${optionDokter}
                             </select>
                         </div>
@@ -278,6 +258,34 @@
           }
         });
     }
+  }
+  function getOptData() {
+    //get dokter
+    fetch("/dokter/get", {
+      method: "GET",
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        optionDokter = "<option value=''>Pilih Dokter</option>";
+        result.data.forEach((dokter) => {
+          optionDokter += `<option value="${dokter.id}">${dokter.nama}</option>`;
+        });
+
+        $("select#dokter").html(optionDokter);
+      });
+
+    //get pasien
+    fetch("/pasien/get", {
+      method: "GET",
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        optionPasien = "<option value=''>Pilih Pasien</option>";
+        result.data.forEach((pasien) => {
+          optionPasien += `<option value="${pasien.id}">${pasien.nama}</option>`;
+        });
+        $("select#pasien").html(optionPasien);
+      });
   }
 </script>
 {% endblock %}
