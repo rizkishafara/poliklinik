@@ -1,0 +1,209 @@
+{% extends "../template/template.html" %} {% block content %}
+
+<h4>Data Dokter</h4>
+
+<div class="mb-3">
+  <button type="button" class="btn btn-primary" onclick="addDokter()">
+    Tambah Dokter
+  </button>
+</div>
+<div class="card">
+  <div class="card-body">
+    <table id="table-dokter">
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Nama Dokter</th>
+          <th>Alamat</th>
+          <th>No Telepon</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+{% endblock %} {% block js %}
+<script>
+  $(document).ready(function () {
+    $("#table-dokter").DataTable({
+      processing: true,
+      serverSide: true,
+      paging: false,
+      ajax: {
+        url: "/dokter/get",
+        type: "GET",
+        dataSrc: function (json) {
+          console.log(json);
+
+          // Check if json.data is null, return empty array if true
+          return json.data ? json.data : [];
+        },
+      },
+      columns: [
+        { data: "id" },
+        { data: "nama" },
+        { data: "alamat" },
+        { data: "no_hp" },
+        {
+          data: null,
+          render: function (data, type, row) {
+            let rowData = JSON.stringify(row).replace(/"/g, "&quot;"); // Encode quotes for HTML
+            return `
+            <div class="btn-group" role="group" aria-label="Basic example">
+                <button type="button" class="btn btn-warning" onclick="editDokter('${rowData}')">Edit</button>
+                <button type="button" class="btn btn-danger" onclick="deleteDokter('${rowData}')">Delete</button>
+            </div>
+            `;
+          },
+        },
+      ],
+    });
+  });
+
+  function addDokter() {
+    const modal = `
+         <div class="modal fade" id="modalAddDokter" tabindex="-1" aria-labelledby="modalAddDokterLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalAddDokterLabel">Tambah Dokter</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formAddDokter" method="POST">
+                        <div class="mb-3">
+                            <label for="nama" class="form-label">Nama Dokter</label>
+                            <input type="text" class="form-control" id="nama" name="nama" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="alamat" class="form-label">Alamat</label>
+                            <input type="text" class="form-control" id="alamat" name="alamat" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="no_hp" class="form-label">No Telepon</label>
+                            <input type="text" class="form-control" id="no_hp" name="no_hp" required>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                        </div>
+                    </form>
+                </div>
+                </div>
+            </div>
+            </div>
+        `;
+    $("body").append(modal);
+    $("#modalAddDokter")
+      .modal("show")
+      .ready(function () {
+        $("#formAddDokter").submit(async function (e) {
+          e.preventDefault();
+          const formData = new FormData(this);
+          const response = await fetch("/dokter/create", {
+            method: "POST",
+            body: formData,
+          });
+          const result = await response.json();
+          if (result.status === 200) {
+            alert(result.message);
+            $("#modalAddDokter").modal("hide");
+            $("#table-dokter").DataTable().ajax.reload();
+          } else {
+            alert(result.message);
+          }
+        });
+      })
+      .on("hidden.bs.modal", function () {
+        $(this).remove();
+      });
+  }
+  function editDokter(data) {
+    console.log(data);
+
+    data = JSON.parse(data);
+
+    const modal = `
+         <div class="modal fade" id="modalEditDokter" tabindex="-1" aria-labelledby="modalEditDokterLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalEditDokterLabel">Edit Dokter</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formEditDokter" method="POST">
+                        <Input type="hidden" name="id" value="${data.id}">
+                        <div class="mb-3">
+                            <label for="nama" class="form-label">Nama Dokter</label>
+                            <input type="text" class="form-control" id="nama" name="nama" value="${data.nama}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="alamat" class="form-label">Alamat</label>
+                            <input type="text" class="form-control" id="alamat" name="alamat" value="${data.alamat}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="no_hp" class="form-label">No Telepon</label>
+                            <input type="text" class="form-control" id="no_hp" name="no_hp" value="${data.no_hp}" required>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                        </div>
+                    </form>
+                </div>
+                </div>
+            </div>
+            </div>
+        `;
+    $("body").append(modal);
+    $("#modalEditDokter")
+      .modal("show")
+      .ready(function () {
+        $("#formEditDokter").submit(async function (e) {
+          e.preventDefault();
+          const formData = new FormData(this);
+          const response = await fetch("/dokter/update", {
+            method: "POST",
+            body: formData,
+          });
+          const result = await response.json();
+          if (result.status === 200) {
+            alert(result.message);
+            $("#modalEditDokter").modal("hide");
+            $("#table-dokter").DataTable().ajax.reload();
+          } else {
+            alert(result.message);
+          }
+        });
+      })
+      .on("hidden.bs.modal", function () {
+        $(this).remove();
+      });
+  }
+  function deleteDokter(data) {
+    data = JSON.parse(data);
+    let id = data.id;
+
+    formData = new FormData();
+    formData.append("id", id);
+
+    if (confirm("Apakah anda yakin ingin menghapus data ini?")) {
+      fetch(`/dokter/delete`, {
+        method: "POST",
+        body: formData,
+      })
+        .then((response) => response.json())
+        .then((result) => {
+          if (result.status === 200) {
+            alert(result.message);
+            $("#table-dokter").DataTable().ajax.reload();
+          } else {
+            alert(result.message);
+          }
+        });
+    }
+  }
+</script>
+{% endblock %}
