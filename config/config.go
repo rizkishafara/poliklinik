@@ -1,6 +1,8 @@
 package config
 
 import (
+	"os"
+
 	"github.com/spf13/viper"
 )
 
@@ -31,7 +33,11 @@ func LoadConfig(path string) (config Config) {
 	v.SetDefault("SERVER_PORT", 1323)
 	// v.SetDefault("DB_DSN", "host=localhost user=root dbname=grelegant port=8080 sslmode=disable")
 
-	v.SetConfigFile(".env")
+	if _, err := os.Stat(path + "/dev.env"); os.IsNotExist(err) {
+		v.SetConfigFile(".env")
+	} else {
+		v.SetConfigFile("dev.env")
+	}
 	v.SetConfigType("env")
 	v.AddConfigPath(path)
 	v.AutomaticEnv()
