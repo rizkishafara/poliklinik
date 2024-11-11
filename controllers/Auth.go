@@ -37,9 +37,9 @@ func LoginPost(c echo.Context) error {
 			return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Session error"})
 		}
 		secureFlag := false
-		// if c.Request().TLS != nil { // Check if HTTPS is used
-		// 	secureFlag = true
-		// }
+		if c.Request().TLS != nil { // Check if HTTPS is used
+			secureFlag = true
+		}
 		sess.Options = &sessions.Options{
 			Path:     "/",
 			MaxAge:   86400,                 // 24 hours
