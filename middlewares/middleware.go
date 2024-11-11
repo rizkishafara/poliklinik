@@ -1,7 +1,6 @@
 package middlewares
 
 import (
-	"encoding/gob"
 	"fmt"
 	"net/http"
 	"poliklinik/router"
@@ -17,7 +16,7 @@ func AuthSessionMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 			return next(ctx)
 		}
 		fmt.Println("path: ", ctx.Request().RequestURI)
-		gob.Register(map[string]interface{}{})
+		// gob.Register(map[string]interface{}{})
 		sess, errS := session.Get("session", ctx)
 		if errS != nil {
 			ctx.Logger().Error(errS)
@@ -38,7 +37,7 @@ func AuthSessionMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 func isPublicRoute(path string) bool {
 
 	for _, route := range router.PublicRoutes {
-		fmt.Println("route: ", route)
+		// fmt.Println("route: ", route)
 		if route == path {
 			return true
 		}

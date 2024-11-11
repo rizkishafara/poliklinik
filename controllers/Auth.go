@@ -32,20 +32,20 @@ func LoginPost(c echo.Context) error {
 
 		sess, err := session.Get("session", c)
 
-		secureFlag := false
-		if c.Request().TLS != nil { // Check if HTTPS is used
-			secureFlag = true
+		if err != nil {
+			log.Println("error get session", err)
+			return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Session error"})
 		}
+		secureFlag := false
+		// if c.Request().TLS != nil { // Check if HTTPS is used
+		// 	secureFlag = true
+		// }
 		sess.Options = &sessions.Options{
 			Path:     "/",
 			MaxAge:   86400,                 // 24 hours
 			HttpOnly: true,                  // More secure as it prevents JavaScript access
 			SameSite: http.SameSiteNoneMode, // Enable cross-site access
 			Secure:   secureFlag,            // Required for SameSite=None
-		}
-		if err != nil {
-			log.Println("error get session", err)
-			return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Session error"})
 		}
 
 		sess.Values["Auth"] = true

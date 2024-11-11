@@ -60,7 +60,7 @@ func main() {
 		CustomTimeFormat: "2006/01/02 15:04:05.00000",
 	}))
 	cookie := sessions.NewFilesystemStore("", []byte(os.Getenv("SECRET_KEY")))
-	cookie.MaxLength(100000)
+	// cookie.MaxLength(100000)
 	storesess := &session.Config{
 		Store: cookie,
 	}
